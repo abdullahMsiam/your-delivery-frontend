@@ -7,17 +7,10 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Field,
   FieldError,
@@ -54,6 +47,7 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next");
   const { login } = useAuth();
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -64,7 +58,6 @@ export function LoginForm() {
   const { control, formState } = form;
   const submitting = formState.isSubmitting;
 
-  /* -------------------------- Redirect helper -------------------------- */
   const goAfterLogin = React.useCallback(
     (role: Parameters<typeof homeRouteForRole>[0]) => {
       const target =
@@ -74,7 +67,6 @@ export function LoginForm() {
     [next, router],
   );
 
-  /* --------------------------- Standard login -------------------------- */
   async function onSubmit(values: LoginValues) {
     try {
       const user = await login(values.email, values.password);
@@ -87,7 +79,6 @@ export function LoginForm() {
     }
   }
 
-  /* ----------------------------- Demo login ---------------------------- */
   async function handleDemoLogin(account: DemoAccount) {
     try {
       const user = await login(account.email, account.password);
@@ -100,60 +91,71 @@ export function LoginForm() {
     }
   }
 
+  /* ------------------- Ordered demo accounts for layout ---------------- */
+  // Top row: Admin + Customer. Bottom row: Agent.
+  const topRow = DEMO_ACCOUNTS.filter((a) => a.role !== "AGENT");
+  const bottomRow = DEMO_ACCOUNTS.filter((a) => a.role === "AGENT");
+
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="text-center space-y-1">
-        <CardTitle className="text-2xl">Welcome Back 👋</CardTitle>
-        <CardDescription>Login to your account</CardDescription>
-      </CardHeader>
+    <div className="space-y-8">
+      {/* Heading */}
+      <div className="space-y-2">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+          Welcome back 👋
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Sign in to your account to continue
+        </p>
+      </div>
 
-      <CardContent className="space-y-6">
-        {/* ------------------------------ Form ------------------------------ */}
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4"
-          noValidate
-        >
-          {/* Email */}
-          <Controller
-            name="email"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid || undefined}>
-                <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                <Input
-                  {...field}
-                  id={field.name}
-                  type="email"
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                  disabled={submitting}
-                  aria-invalid={fieldState.invalid}
-                  aria-describedby={
-                    fieldState.invalid ? `${field.name}-error` : undefined
-                  }
+      {/* Form */}
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-5"
+        noValidate
+      >
+        <Controller
+          name="email"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid || undefined}>
+              <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                type="email"
+                placeholder="you@example.com"
+                autoComplete="email"
+                autoCapitalize="none"
+                spellCheck={false}
+                disabled={submitting}
+                aria-invalid={fieldState.invalid}
+                aria-describedby={
+                  fieldState.invalid ? `${field.name}-error` : undefined
+                }
+                className="h-11"
+              />
+              {fieldState.invalid && fieldState.error && (
+                <FieldError
+                  id={`${field.name}-error`}
+                  errors={[fieldState.error]}
                 />
-                {fieldState.invalid && fieldState.error && (
-                  <FieldError
-                    id={`${field.name}-error`}
-                    errors={[fieldState.error]}
-                  />
-                )}
-              </Field>
-            )}
-          />
+              )}
+            </Field>
+          )}
+        />
 
-          {/* Password */}
-          <Controller
-            name="password"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid || undefined}>
-                <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+        <Controller
+          name="password"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid || undefined}>
+              <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+              <div className="relative">
                 <Input
                   {...field}
                   id={field.name}
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   autoComplete="current-password"
                   disabled={submitting}
@@ -161,49 +163,53 @@ export function LoginForm() {
                   aria-describedby={
                     fieldState.invalid ? `${field.name}-error` : undefined
                   }
+                  className="h-11 pr-11"
                 />
-                {fieldState.invalid && fieldState.error && (
-                  <FieldError
-                    id={`${field.name}-error`}
-                    errors={[fieldState.error]}
-                  />
-                )}
-              </Field>
-            )}
-          />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+              {fieldState.invalid && fieldState.error && (
+                <FieldError
+                  id={`${field.name}-error`}
+                  errors={[fieldState.error]}
+                />
+              )}
+            </Field>
+          )}
+        />
 
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? "Logging in…" : "Login"}
-          </Button>
-        </form>
+        <Button
+          type="submit"
+          className="w-full h-11"
+          disabled={submitting}
+        >
+          {submitting ? "Signing in…" : "Sign in"}
+        </Button>
+      </form>
 
-        {/* --------------------------- Divider ------------------------------ */}
-        <div className="relative">
-          <Separator />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-            OR
-          </span>
-        </div>
+      {/* Divider */}
+      <div className="relative">
+        <Separator />
+        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          or continue with demo
+        </span>
+      </div>
 
-        {/* -------------------------- Demo logins -------------------------- */}
-        <div className="space-y-3">
-          <p className="text-center text-sm font-medium text-muted-foreground">
-            🚀 Quick Demo Login
-          </p>
-
-          <div className="grid grid-cols-2 gap-3">
-            {DEMO_ACCOUNTS.filter((a) => a.role !== "AGENT").map((account) => (
-              <DemoLoginButton
-                key={account.role}
-                account={account}
-                onLogin={handleDemoLogin}
-                disabled={submitting}
-              />
-            ))}
-          </div>
-
-          {/* Agent spans full width — matches the mockup from the brief */}
-          {DEMO_ACCOUNTS.filter((a) => a.role === "AGENT").map((account) => (
+      {/* Demo logins */}
+      <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          {topRow.map((account) => (
             <DemoLoginButton
               key={account.role}
               account={account}
@@ -212,17 +218,28 @@ export function LoginForm() {
             />
           ))}
         </div>
-      </CardContent>
 
-      <CardFooter className="justify-center text-sm text-muted-foreground">
+        {bottomRow.map((account) => (
+          <DemoLoginButton
+            key={account.role}
+            account={account}
+            onLogin={handleDemoLogin}
+            disabled={submitting}
+            fullWidth
+          />
+        ))}
+      </div>
+
+      {/* Register link */}
+      <p className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
         <Link
           href="/register"
-          className="ml-1 font-medium text-primary hover:underline"
+          className="font-medium text-primary hover:underline underline-offset-4"
         >
-          Register
+          Create one
         </Link>
-      </CardFooter>
-    </Card>
+      </p>
+    </div>
   );
 }

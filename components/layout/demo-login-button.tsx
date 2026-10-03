@@ -10,6 +10,7 @@ interface Props {
   account: DemoAccount;
   onLogin: (account: DemoAccount) => Promise<void>;
   disabled?: boolean;
+  fullWidth?: boolean;
 }
 
 const iconFor = {
@@ -18,7 +19,12 @@ const iconFor = {
   agent: Briefcase,
 } as const;
 
-export function DemoLoginButton({ account, onLogin, disabled }: Props) {
+export function DemoLoginButton({
+  account,
+  onLogin,
+  disabled,
+  fullWidth,
+}: Props) {
   const [loading, setLoading] = React.useState(false);
   const Icon = iconFor[account.icon];
 
@@ -38,15 +44,30 @@ export function DemoLoginButton({ account, onLogin, disabled }: Props) {
       disabled={disabled || loading}
       onClick={handleClick}
       className={cn(
-        "h-auto flex-col gap-2 py-4 border-2 hover:border-primary hover:bg-primary/5",
-        "transition-colors",
+        "group h-auto gap-2 border-2 py-4 transition-colors",
+        "hover:border-primary hover:bg-primary/5",
+        "focus-visible:border-primary",
+        fullWidth ? "w-full flex-row justify-center" : "flex-col"
       )}
     >
-      <Icon className="h-6 w-6 text-primary" />
-      <span className="text-sm font-medium">
-        {loading ? "Logging in…" : account.label}
+      <span
+        className={cn(
+          "flex items-center justify-center rounded-md bg-primary/10 text-primary transition-colors",
+          "group-hover:bg-primary/15",
+          fullWidth ? "h-8 w-8" : "h-10 w-10"
+        )}
+      >
+        <Icon className={cn(fullWidth ? "h-4 w-4" : "h-5 w-5")} />
       </span>
-      <span className="text-xs text-muted-foreground">Demo Login</span>
+
+      <span className="flex flex-col items-center leading-tight">
+        <span className="text-sm font-medium">
+          {loading ? "Signing in…" : account.label}
+        </span>
+        <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+          Demo login
+        </span>
+      </span>
     </Button>
   );
 }
