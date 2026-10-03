@@ -4,25 +4,32 @@ import { useAuthStore } from "@/src/store/auth-store";
 import * as React from "react";
 
 /**
- * Reads persisted Zustand state on mount and ensures
- * isAuthenticated is consistent with the presence of a token.
- * Prevents flash of "logged out" UI on first render after refresh.
+ * Waits for Zustand's persisted state to rehydrate before rendering children.
+ * Uses `useSyncExternalStore` — the React-recommended way to subscribe to
+ * an external store (which is what Zustand is), avoiding setState-in-effect.
+ *
+ * Renders nothing during SSR and first client render; content appears
+ * once localStorage has been read and merged into the store.
  */
 export function AuthSync({ children }: { children: React.ReactNode }) {
-  const hasHydrated = useAuthStore.persist.hasHydrated();
-  const [ready, setReady] = React.useState(hasHydrated);
+  const isHydrated = React.useSyncExternalStore(
+    // subscribe: called on the client only
+    (callback) => {
+      const persistApi = useAuthStore.persist;
+      if (!persistApi) return () => {};
+      const unsub = persistApi.onFinishHydration(callback);
+      return unsub;
+    },
+    // getSnapshot: client
+    () => {
+      const persistApi = useAuthStore.persist;
+      return persistApi ? persistApi.hasHydrated() : true;
+    },
+    // getServerSnapshot: SSR — always false, we don't know yet
+    () => false
+  );
 
-  React.useEffect(() => {
-    const unsub = useAuthStore.persist.onFinishHydration(() => setReady(true));
-    // If already hydrated, unblock immediately.
-    if (useAuthStore.persist.hasHydrated()) setReady(true);
-    return unsub;
-  }, []);
-
-  if (!ready) {
-    // Render nothing (or a skeleton) on first client paint.
-    return null;
-  }
+  if (!isHydrated) return null;
 
   return <>{children}</>;
 }
