@@ -1,7 +1,7 @@
 "use client";
 
-import { useAuthStore } from "@/store/auth-store";
-import type { UserRole } from "@/types";
+import { useAuthStore } from "@/src/store/auth-store";
+import type { UserRole } from "@/src/types";
 
 /** Full auth state + actions. */
 export function useAuth() {

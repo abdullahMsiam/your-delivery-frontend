@@ -5,7 +5,7 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from "axios";
 
-import type { ApiErrorResponse, ZodIssue } from "@/types";
+import type { ApiErrorResponse, ZodIssue } from "@/src/types";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Constants                                  */

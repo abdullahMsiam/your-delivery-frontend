@@ -4,7 +4,8 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 import { api, configureApiClient } from "@/lib/api-client";
-import type { AuthUser, LoginResponse, UserRole } from "@/types";
+import type { AuthUser, LoginResponse, UserRole } from "@/src/types";
+import { authCookies } from "@/lib/cookies";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Types                                    */
@@ -56,6 +57,10 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
         });
 
+        // Mirror to cookies so edge middleware can read them.
+        authCookies.setTokens(accessToken, refreshToken);
+        authCookies.setRole(user.role);
+
         return user;
       },
 
@@ -76,24 +81,28 @@ export const useAuthStore = create<AuthState>()(
       },
 
       /* ----------------------------- setTokens --------------------------- */
-      setTokens: (accessToken, refreshToken) =>
+      setTokens: (accessToken, refreshToken) => {
         set((s) => ({
           accessToken,
           refreshToken: refreshToken ?? s.refreshToken,
           isAuthenticated: true,
-        })),
+        }));
+        authCookies.setTokens(accessToken, refreshToken);
+      },
 
       /* ------------------------------ setUser ---------------------------- */
       setUser: (user) => set({ user }),
 
       /* ----------------------------- clearAuth --------------------------- */
-      clearAuth: () =>
+      clearAuth: () => {
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
-        }),
+        });
+        authCookies.clear();
+      },
 
       /* ------------------------------ hasRole ---------------------------- */
       hasRole: (...roles) => {
