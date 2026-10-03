@@ -321,3 +321,15 @@ export interface UnreadCountResponse {
 export interface MarkAllReadResponse {
   updatedCount: number;
 }
+
+export interface ApiErrorResponse {
+  success: false;
+  message: string;
+  errors?: ZodIssue[];
+}
+
+export interface ZodIssue {
+  code: string;
+  path: (string | number)[];
+  message: string;
+}
