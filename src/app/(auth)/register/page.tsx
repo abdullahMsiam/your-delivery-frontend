@@ -1,16 +1,12 @@
+import { RegisterForm } from "@/src/features/auth/components/register-form";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Register",
-  description: "Create your Your Delivery account.",
+  description:
+    "Create your Your Delivery account to send parcels, track deliveries, and manage payments.",
 };
 
 export default function RegisterPage() {
-  return (
-    <main className="min-h-screen flex items-center justify-center p-4">
-      <p className="text-muted-foreground">
-        Register page — coming in Section 3.
-      </p>
-    </main>
-  );
+  return <RegisterForm />;
 }
