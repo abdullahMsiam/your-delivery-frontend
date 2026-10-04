@@ -1,8 +1,7 @@
 import Link from "next/link";
+import { Globe, Mail, MessageCircle, Send } from "lucide-react";
 import { Brand } from "@/components/layout/brand";
 import { Container } from "@/components/shared/container";
-import { Twitter, Facebook, Github, Linkedin } from "lucide-react";
-
 const COLUMNS = [
   {
     title: "Product",
@@ -43,31 +42,31 @@ export function PublicFooter() {
             <div className="flex items-center gap-2 text-muted-foreground">
               <Link
                 href="#"
-                aria-label="Twitter"
+                aria-label="Twitter / X"
                 className="hover:text-foreground"
               >
-                <Twitter className="h-4 w-4" />
+                <Send className="h-4 w-4" />
               </Link>
               <Link
                 href="#"
                 aria-label="Facebook"
                 className="hover:text-foreground"
               >
-                <Facebook className="h-4 w-4" />
+                <MessageCircle className="h-4 w-4" />
               </Link>
               <Link
                 href="#"
-                aria-label="GitHub"
+                aria-label="Website"
                 className="hover:text-foreground"
               >
-                <Github className="h-4 w-4" />
+                <Globe className="h-4 w-4" />
               </Link>
               <Link
                 href="#"
-                aria-label="LinkedIn"
+                aria-label="Email"
                 className="hover:text-foreground"
               >
-                <Linkedin className="h-4 w-4" />
+                <Mail className="h-4 w-4" />
               </Link>
             </div>
           </div>
