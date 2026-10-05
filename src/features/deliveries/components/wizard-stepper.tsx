@@ -1,8 +1,13 @@
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// interface Props {
+//   steps: { title: string; description?: string }[];
+//   current: number; // 0-indexed
+// }
+
 interface Props {
-  steps: { title: string; description?: string }[];
+  steps: readonly { title: string; description?: string }[];
   current: number; // 0-indexed
 }
 
