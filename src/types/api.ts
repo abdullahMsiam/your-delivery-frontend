@@ -93,7 +93,6 @@ export interface RefreshTokenResponse {
 /* -------------------------------------------------------------------------- */
 /*                                 Addresses                                  */
 /* -------------------------------------------------------------------------- */
-
 export interface Address {
   id: string;
   name: string;
@@ -101,6 +100,8 @@ export interface Address {
   addressLine: string;
   city: string;
   postalCode: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /** Payload sent when creating a delivery. */
@@ -121,9 +122,10 @@ export interface Payment {
   deliveryId: string;
   method: PaymentMethod;
   status: PaymentStatus;
-  /** Decimal-as-string from backend. Parse with Number() for display. */
+  /** Decimal-as-string. Parse with Number() for display. */
   amount: string;
   stripePaymentId: string | null;
+  stripeClientSecret: string | null;
   paidAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -140,14 +142,12 @@ export interface CreatePaymentIntentResponse {
 
 export interface HistoryEntry {
   id: string;
+  deliveryId: string;
   status: DeliveryStatus;
   note: string | null;
+  /** UUID of the user who made the change. */
+  updatedBy: string | null;
   createdAt: string;
-  updatedBy: {
-    id: string;
-    name: string;
-    role: UserRole;
-  } | null;
 }
 
 export interface DeliveryHistory {
@@ -172,7 +172,9 @@ export interface Delivery {
   customerId: string;
   agentId: string | null;
 
-  status: DeliveryStatus;
+  pickupAddressId: string;
+  deliveryAddressId: string;
+
   parcelType: string;
   /** Decimal-as-string. */
   weight: string;
@@ -180,43 +182,103 @@ export interface Delivery {
   deliveryCharge: string;
   /** Decimal-as-string. */
   codAmount: string;
-  paymentMethod: PaymentMethod;
+
+  status: DeliveryStatus;
+
+  createdAt: string;
+  updatedAt: string;
 
   pickupAddress: Address;
   deliveryAddress: Address;
 
-  agent?: DeliveryAgent | null;
-  payment?: Payment | null;
+  payment: Payment | null;
 
-  createdAt: string;
-  updatedAt: string;
+  /** Only present on the `/deliveries/{id}` detail endpoint. */
+  statusHistory?: HistoryEntry[];
+  /** Only present on the `/deliveries/{id}` detail endpoint. */
+  agent?: DeliveryAgent | null;
 }
 
-/** Detail view — includes history + agent contact. */
 export interface DeliveryDetail extends Delivery {
-  history: HistoryEntry[];
+  statusHistory: HistoryEntry[];
+  agent: DeliveryAgent | null;
+}
+
+export interface CreateDeliveryInput {
+  pickupAddress: AddressInput;
+  deliveryAddress: AddressInput;
+  parcelType: string;
+  weight: number;
+  deliveryCharge: number;
+  codAmount?: number;
+  paymentMethod: PaymentMethod;
 }
 
 /* -------------------------------------------------------------------------- */
 /*                          Public tracking response                          */
 /* -------------------------------------------------------------------------- */
 
-export interface TrackingResponse {
-  trackingId: string;
+export interface TrackingHistoryEntry {
+  id: string;
+  deliveryId: string;
   status: DeliveryStatus;
-  parcelType: string;
-  weight: string;
+  note: string | null;
+  /** UUID of the user who made the change */
+  updatedBy: string | null;
+  createdAt: string;
+}
+
+export interface TrackingAddress {
+  id: string;
+  name: string;
+  phone: string;
+  addressLine: string;
+  city: string;
+  postalCode: string;
   createdAt: string;
   updatedAt: string;
-  pickupCity: string;
-  pickupPostalCode: string;
-  deliveryCity: string;
-  deliveryPostalCode: string;
-  history: {
-    status: DeliveryStatus;
-    note: string | null;
-    createdAt: string;
-  }[];
+}
+
+export interface TrackingPayment {
+  id: string;
+  deliveryId: string;
+  method: PaymentMethod;
+  status: PaymentStatus;
+  /** decimal-as-string */
+  amount: string;
+  stripePaymentId: string | null;
+  stripeClientSecret: string | null;
+  paidAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TrackingResponse {
+  id: string;
+  trackingId: string;
+  customerId: string;
+  agentId: string | null;
+  pickupAddressId: string;
+  deliveryAddressId: string;
+
+  parcelType: string;
+  /** decimal-as-string */
+  weight: string;
+  /** decimal-as-string */
+  deliveryCharge: string;
+  /** decimal-as-string */
+  codAmount: string;
+  status: DeliveryStatus;
+
+  createdAt: string;
+  updatedAt: string;
+
+  pickupAddress: TrackingAddress;
+  deliveryAddress: TrackingAddress;
+
+  statusHistory: TrackingHistoryEntry[];
+
+  payment: TrackingPayment | null;
 }
 
 /* -------------------------------------------------------------------------- */

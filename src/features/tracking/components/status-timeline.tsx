@@ -1,31 +1,11 @@
-import {
-  CheckCircle2,
-  Circle,
-  Clock,
-  MapPin,
-  Package,
-  PackageCheck,
-  Truck,
-  XCircle,
-} from "lucide-react";
+import { Clock, Package, PackageCheck, Truck, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { DeliveryStatus } from "@/src/types";
-
-interface TimelineEntry {
-  status: DeliveryStatus;
-  note: string | null;
-  createdAt: string;
-}
+import { DeliveryStatus, TrackingHistoryEntry } from "@/src/types";
 
 interface Props {
-  entries: TimelineEntry[];
-  /** Current status, so we can highlight the "active" entry. */
+  entries: TrackingHistoryEntry[];
   currentStatus: DeliveryStatus;
 }
-
-/* -------------------------------------------------------------------------- */
-/*                        Status → icon + tone mapping                        */
-/* -------------------------------------------------------------------------- */
 
 const ICON_BY_STATUS: Record<
   DeliveryStatus,
@@ -76,10 +56,6 @@ const TONE_BY_STATUS: Record<DeliveryStatus, { dot: string; icon: string }> = {
   },
 };
 
-/* -------------------------------------------------------------------------- */
-/*                          Friendly status labels                            */
-/* -------------------------------------------------------------------------- */
-
 const LABEL: Record<DeliveryStatus, string> = {
   PENDING: "Order placed",
   ASSIGNED: "Agent assigned",
@@ -91,10 +67,6 @@ const LABEL: Record<DeliveryStatus, string> = {
   FAILED: "Delivery failed",
 };
 
-/* -------------------------------------------------------------------------- */
-/*                              Date formatting                               */
-/* -------------------------------------------------------------------------- */
-
 function formatDate(iso: string) {
   const d = new Date(iso);
   return d.toLocaleString(undefined, {
@@ -105,22 +77,9 @@ function formatDate(iso: string) {
   });
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                 Component                                  */
-/* -------------------------------------------------------------------------- */
-
 export function StatusTimeline({ entries, currentStatus }: Props) {
-  //   if (!entries.length) {
-  //     return (
-  //       <p className="text-sm text-muted-foreground">No history available yet.</p>
-  //     );
-  //   }
-
-  //   // Newest first
-  //   const sorted = [...entries].sort(
-  //     (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt),
-  //   );
   const list = Array.isArray(entries) ? entries : [];
+
   if (!list.length) {
     return (
       <p className="text-sm text-muted-foreground">No history available yet.</p>
@@ -133,7 +92,6 @@ export function StatusTimeline({ entries, currentStatus }: Props) {
 
   return (
     <ol className="relative space-y-6">
-      {/* vertical line */}
       <span
         aria-hidden
         className="absolute left-[19px] top-2 bottom-2 w-px bg-border"
@@ -146,7 +104,7 @@ export function StatusTimeline({ entries, currentStatus }: Props) {
 
         return (
           <li
-            key={`${entry.status}-${entry.createdAt}-${i}`}
+            key={entry.id ?? `${entry.status}-${entry.createdAt}-${i}`}
             className="relative flex gap-4"
           >
             <span

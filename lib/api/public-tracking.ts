@@ -2,21 +2,15 @@ import "server-only";
 import { ApiError } from "@/lib/api-client";
 import { TrackingResponse } from "@/src/types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1";
 
-/**
- * Fetch a public tracking record by tracking ID.
- * Uses native fetch so it can run in a Server Component.
- * Returns `null` on 404 (so callers can trigger notFound()).
- * Throws on other errors (so error.tsx / toast layers catch them).
- */
 export async function fetchTracking(
   trackingId: string
 ): Promise<TrackingResponse | null> {
   const url = `${API_URL}/deliveries/track/${encodeURIComponent(trackingId)}`;
 
   const res = await fetch(url, {
-    // Public data — safe to cache briefly
     next: { revalidate: 30 },
     headers: { Accept: "application/json" },
   });
