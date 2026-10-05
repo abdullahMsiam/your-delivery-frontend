@@ -10,33 +10,61 @@ export const queryKeys = {
 
   deliveries: {
     all: ["deliveries"] as const,
-    myList: (params?: Record<string, unknown>) =>
+    myList: (params?: unknown) =>
       ["deliveries", "my-list", params ?? {}] as const,
     detail: (id: string) => ["deliveries", "detail", id] as const,
     history: (id: string) => ["deliveries", "history", id] as const,
     track: (trackingId: string) => ["deliveries", "track", trackingId] as const,
   },
+  // deliveries: {
+  //   all: ["deliveries"] as const,
+  //   myList: (params?: Record<string, unknown>) =>
+  //     ["deliveries", "my-list", params ?? {}] as const,
+  //   detail: (id: string) => ["deliveries", "detail", id] as const,
+  //   history: (id: string) => ["deliveries", "history", id] as const,
+  //   track: (trackingId: string) => ["deliveries", "track", trackingId] as const,
+  // },
 
   agent: {
     me: ["agent", "me"] as const,
     statistics: ["agent", "statistics"] as const,
-    deliveries: (params?: Record<string, unknown>) =>
+    deliveries: (params?: unknown) =>
       ["agent", "deliveries", params ?? {}] as const,
   },
 
+  // agent: {
+  //   me: ["agent", "me"] as const,
+  //   statistics: ["agent", "statistics"] as const,
+  //   deliveries: (params?: Record<string, unknown>) =>
+  //     ["agent", "deliveries", params ?? {}] as const,
+  // },
+
   admin: {
     dashboard: ["admin", "dashboard"] as const,
-    deliveries: (params?: Record<string, unknown>) =>
+    deliveries: (params?: unknown) =>
       ["admin", "deliveries", params ?? {}] as const,
     deliveryDetail: (id: string) =>
       ["admin", "deliveries", "detail", id] as const,
-    users: (params?: Record<string, unknown>) =>
-      ["admin", "users", params ?? {}] as const,
+    users: (params?: unknown) => ["admin", "users", params ?? {}] as const,
     userDetail: (id: string) => ["admin", "users", "detail", id] as const,
     agentProfile: (id: string) => ["admin", "agents", id] as const,
     agentStatistics: (id: string) =>
       ["admin", "agents", id, "statistics"] as const,
   },
+
+  // admin: {
+  //   dashboard: ["admin", "dashboard"] as const,
+  //   deliveries: (params?: Record<string, unknown>) =>
+  //     ["admin", "deliveries", params ?? {}] as const,
+  //   deliveryDetail: (id: string) =>
+  //     ["admin", "deliveries", "detail", id] as const,
+  //   users: (params?: Record<string, unknown>) =>
+  //     ["admin", "users", params ?? {}] as const,
+  //   userDetail: (id: string) => ["admin", "users", "detail", id] as const,
+  //   agentProfile: (id: string) => ["admin", "agents", id] as const,
+  //   agentStatistics: (id: string) =>
+  //     ["admin", "agents", id, "statistics"] as const,
+  // },
 
   payments: {
     byDelivery: (deliveryId: string) =>
@@ -45,10 +73,17 @@ export const queryKeys = {
 
   notifications: {
     all: ["notifications"] as const,
-    list: (params?: Record<string, unknown>) =>
+    list: (params?: unknown) =>
       ["notifications", "list", params ?? {}] as const,
     unreadCount: ["notifications", "unread-count"] as const,
   },
+
+  // notifications: {
+  //   all: ["notifications"] as const,
+  //   list: (params?: Record<string, unknown>) =>
+  //     ["notifications", "list", params ?? {}] as const,
+  //   unreadCount: ["notifications", "unread-count"] as const,
+  // },
 
   users: {
     me: ["users", "me"] as const,
