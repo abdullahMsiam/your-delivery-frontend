@@ -299,7 +299,30 @@ export interface CreateDeliveryInput {
 /*                             Agent endpoints                                */
 /* -------------------------------------------------------------------------- */
 
-export interface AgentStatistics {
+// export interface AgentStatistics {
+//   totalAssigned: number;
+//   activeDeliveries: number;
+//   completedDeliveries: number;
+//   delivered: number;
+//   failed: number;
+//   cancelled: number;
+//   statusBreakdown: {
+//     assigned: number;
+//     pickedUp: number;
+//     inTransit: number;
+//     outForDelivery: number;
+//   };
+//   successRate: number; // 0–100
+// }
+
+export interface AgentStatisticsAgent {
+  id: string;
+  name: string;
+  role: UserRole;
+  isActive: boolean;
+}
+
+export interface AgentStatisticsNumbers {
   totalAssigned: number;
   activeDeliveries: number;
   completedDeliveries: number;
@@ -314,6 +337,11 @@ export interface AgentStatistics {
   };
   /** 0–100 */
   successRate: number;
+}
+
+export interface AgentStatistics {
+  agent: AgentStatisticsAgent;
+  statistics: AgentStatisticsNumbers;
 }
 
 /* -------------------------------------------------------------------------- */
