@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { UserMenu } from "@/components/layout/user-menu";
 import { MobileNav, type NavItem } from "@/components/layout/mobile-nav";
 import { cn } from "@/lib/utils";
+import { NotificationsBell } from "@/components/layout/notifications-bell";
 
 export function AppNavbar({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
@@ -50,6 +51,7 @@ export function AppNavbar({ items }: { items: NavItem[] }) {
         {/* Right side */}
         <div className="ml-auto flex items-center gap-1.5">
           <ThemeToggle />
+          <NotificationsBell/>
           <UserMenu />
         </div>
       </div>
