@@ -37,6 +37,14 @@ interface Props {
 
 const CANCELLABLE_STATUSES = ["PENDING", "ASSIGNED"] as const;
 
+const PAYABLE_DELIVERY_STATUSES = [
+  "PENDING",
+  "ASSIGNED",
+  "PICKED_UP",
+  "IN_TRANSIT",
+  "OUT_FOR_DELIVERY",
+] as const;
+
 export function DeliveryDetailView({ delivery }: Props) {
   const router = useRouter();
   const canCancel = (CANCELLABLE_STATUSES as readonly string[]).includes(
@@ -46,11 +54,12 @@ export function DeliveryDetailView({ delivery }: Props) {
     delivery.payment?.method === "STRIPE" &&
     delivery.payment?.status !== "PAID" &&
     delivery.payment?.status !== "CANCELLED" &&
-    delivery.payment?.status !== "REFUNDED";
+    delivery.payment?.status !== "REFUNDED" &&
+    (PAYABLE_DELIVERY_STATUSES as readonly string[]).includes(delivery.status);
 
   async function handlePayNow() {
     // Full Stripe flow lands in Section 6.
-    toast.info("Payment flow coming in the next section.");
+    router.push(`/dashboard/payments/pay/${delivery.id}`);
   }
 
   return (
