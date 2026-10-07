@@ -4,9 +4,9 @@ import { RoleGuard } from "@/components/layout/role-guard";
 import { UserRole } from "@/src/types";
 import { ProfileContent } from "@/src/features/users/components/profile-content";
 
-export default function CustomerProfilePage() {
+export default function AgentProfilePage() {
   return (
-    <RoleGuard allow={[UserRole.CUSTOMER]}>
+    <RoleGuard allow={[UserRole.AGENT]}>
       <ProfileContent />
     </RoleGuard>
   );
