@@ -5,11 +5,15 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 import { ChartContainer } from "@/components/shared/charts/chart-container";
 import { ChartTooltip } from "@/components/shared/charts/chart-tooltip";
-import type { Delivery } from "@/src/types";
+import type { Delivery, PaymentMethod } from "@/src/types";
 import { ChartEmpty } from "@/components/shared/charts/charts-empty";
 
+interface PaymentLike {
+  payment?: { method?: PaymentMethod } | null;
+}
+
 interface Props {
-  deliveries: Delivery[];
+  deliveries: PaymentLike[];
 }
 
 const COLORS = {

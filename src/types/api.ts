@@ -148,6 +148,15 @@ export interface HistoryEntry {
   /** UUID of the user who made the change. */
   updatedBy: string | null;
   createdAt: string;
+  /**
+   * Nested user info — present on admin detail endpoint.
+   * Not present on customer/agent history responses.
+   */
+  user?: {
+    id: string;
+    name: string;
+    role: UserRole;
+  } | null;
 }
 
 export interface DeliveryHistory {
@@ -378,11 +387,54 @@ export interface AdminDashboard {
     cod: number;
   };
   revenue: {
+    /** Decimal-as-string. */
     totalPaid: string;
+    /** Decimal-as-string. */
     totalPending: string;
   };
-  recentDeliveries: Delivery[];
-  recentUsers: User[];
+  recentDeliveries: RecentDelivery[];
+  recentUsers: RecentUser[];
+}
+
+/* -------------------------------------------------------------------------- */
+/*                    Trimmed shapes returned by admin/dashboard              */
+/* -------------------------------------------------------------------------- */
+
+export interface RecentDeliveryCustomer {
+  id: string;
+  name: string;
+  phone: string;
+}
+
+export interface RecentDeliveryPayment {
+  method: PaymentMethod;
+  status: PaymentStatus;
+  /** Decimal-as-string. */
+  amount: string;
+}
+
+export interface RecentDelivery {
+  id: string;
+  trackingId: string;
+  status: DeliveryStatus;
+  /** Decimal-as-string. */
+  deliveryCharge: string;
+  /** Decimal-as-string. */
+  codAmount: string;
+  createdAt: string;
+  customer: RecentDeliveryCustomer;
+  agent: DeliveryAgent | null;
+  payment: RecentDeliveryPayment | null;
+}
+
+export interface RecentUser {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: UserRole;
+  isActive: boolean;
+  createdAt: string;
 }
 
 export interface AdminUsersResponse {
@@ -422,4 +474,46 @@ export interface ZodIssue {
   code: string;
   path: (string | number)[];
   message: string;
+}
+
+// --------------------------------------------------
+
+export interface DeliveryCustomer {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+}
+
+export interface Delivery {
+  id: string;
+  trackingId: string;
+  customerId: string;
+  agentId: string | null;
+
+  pickupAddressId: string;
+  deliveryAddressId: string;
+
+  parcelType: string;
+  weight: string;
+  deliveryCharge: string;
+  codAmount: string;
+
+  status: DeliveryStatus;
+
+  createdAt: string;
+  updatedAt: string;
+
+  pickupAddress: Address;
+  deliveryAddress: Address;
+
+  payment: Payment | null;
+
+  /** Present on admin + agent list endpoints. */
+  customer?: DeliveryCustomer | null;
+  /** Present on admin + agent list endpoints; full detail also has this. */
+  agent?: DeliveryAgent | null;
+
+  /** Only on detail endpoints. */
+  statusHistory?: HistoryEntry[];
 }

@@ -1,7 +1,12 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { ApiError } from "@/lib/api-client";
-import type { Delivery, DeliveryDetail } from "@/src/types";
+import type {
+  Delivery,
+  DeliveryAgent,
+  DeliveryCustomer,
+  DeliveryDetail,
+} from "@/src/types";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1";
@@ -87,4 +92,36 @@ export async function fetchAgentDeliveryDetail(
     statusHistory: match.statusHistory ?? [],
     agent: match.agent ?? null,
   } as DeliveryDetail;
+}
+
+/* ------------------------- */
+export interface AdminDeliveryDetail extends DeliveryDetail {
+  customer: (DeliveryCustomer & { email?: string }) | null;
+  agent: DeliveryAgent | null;
+}
+
+export async function fetchAdminDeliveryDetail(
+  id: string,
+): Promise<AdminDeliveryDetail | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("yd_access")?.value;
+
+  const res = await fetch(`${API_URL}/admin/deliveries/${id}`, {
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (res.status === 404) return null;
+  if (res.status === 401 || res.status === 403) {
+    throw new ApiError("Not authorized", res.status);
+  }
+  if (!res.ok) {
+    throw new ApiError("Failed to fetch delivery", res.status);
+  }
+
+  const json = (await res.json()) as { data: AdminDeliveryDetail };
+  return json.data;
 }
