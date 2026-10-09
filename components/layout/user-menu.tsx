@@ -32,6 +32,13 @@ export function UserMenu() {
 
   const home = homeRouteForRole(user.role);
 
+  const notifHref =
+    user.role === "ADMIN"
+      ? "/admin/notifications"
+      : user.role === "AGENT"
+        ? "/provider/notifications"
+        : "/dashboard/notifications";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -71,7 +78,7 @@ export function UserMenu() {
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href="/dashboard/notifications" className="cursor-pointer">
+          <Link href={notifHref} className="cursor-pointer">
             <Bell className="mr-2 h-4 w-4" />
             Notifications
           </Link>

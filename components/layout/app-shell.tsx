@@ -8,6 +8,7 @@ import {
   Settings,
   Truck,
   Wallet,
+  Bell,
 } from "lucide-react";
 import { AppNavbar } from "@/components/layout/app-navbar";
 import type { NavItem } from "@/components/layout/mobile-nav";
@@ -20,16 +21,30 @@ const NAV: Record<string, NavItem[]> = {
     { href: "/dashboard/payments", label: "Payments", icon: Wallet },
     { href: "/dashboard/profile", label: "Profile", icon: Settings },
   ],
+  // AGENT: [
+  //   { href: "/provider", label: "Overview", icon: LayoutDashboard },
+  //   { href: "/provider/deliveries", label: "Assigned", icon: Truck },
+  //   { href: "/provider/earnings", label: "Earnings", icon: Wallet },
+  //   { href: "/provider/profile", label: "Profile", icon: Settings },
+  // ],
   AGENT: [
     { href: "/provider", label: "Overview", icon: LayoutDashboard },
     { href: "/provider/deliveries", label: "Assigned", icon: Truck },
     { href: "/provider/earnings", label: "Earnings", icon: Wallet },
+    { href: "/provider/notifications", label: "Inbox", icon: Bell },
     { href: "/provider/profile", label: "Profile", icon: Settings },
   ],
+  // ADMIN: [
+  //   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  //   { href: "/admin/deliveries", label: "Deliveries", icon: Package },
+  //   { href: "/admin/users", label: "Users", icon: Users },
+  //   { href: "/admin/reports", label: "Reports", icon: Settings },
+  // ],
   ADMIN: [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/deliveries", label: "Deliveries", icon: Package },
     { href: "/admin/users", label: "Users", icon: Users },
+    { href: "/admin/notifications", label: "Inbox", icon: Bell },
     { href: "/admin/reports", label: "Reports", icon: Settings },
   ],
 };

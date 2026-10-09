@@ -19,6 +19,15 @@ interface AuthState {
 
   /* actions */
   login: (email: string, password: string) => Promise<AuthUser>;
+  /**
+   * Set a full session in one shot — used by the demo login flow
+   * (which receives tokens from /api/demo-login instead of /auth/login).
+   */
+  setSession: (
+    accessToken: string,
+    refreshToken: string,
+    user: AuthUser,
+  ) => void;
   logout: () => Promise<void>;
   setTokens: (accessToken: string, refreshToken?: string) => void;
   setUser: (user: AuthUser | null) => void;
@@ -62,6 +71,18 @@ export const useAuthStore = create<AuthState>()(
         authCookies.setRole(user.role);
 
         return user;
+      },
+
+      /* ---------------------------- setSession --------------------------- */
+      setSession: (accessToken, refreshToken, user) => {
+        set({
+          user,
+          accessToken,
+          refreshToken,
+          isAuthenticated: true,
+        });
+        authCookies.setTokens(accessToken, refreshToken);
+        authCookies.setRole(user.role);
       },
 
       /* ------------------------------ logout ----------------------------- */
@@ -113,7 +134,6 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "your-delivery-auth",
       storage: createJSONStorage(() => localStorage),
-      // Only persist the essentials — never persist derived state.
       partialize: (s) => ({
         user: s.user,
         accessToken: s.accessToken,
@@ -128,10 +148,6 @@ export const useAuthStore = create<AuthState>()(
 /*                    Wire the store into the API client                      */
 /* -------------------------------------------------------------------------- */
 
-/**
- * The API client must NOT import this store directly (would cause a circular
- * import). Instead we push accessors into it at module load.
- */
 configureApiClient({
   getAccessToken: () => useAuthStore.getState().accessToken,
   getRefreshToken: () => useAuthStore.getState().refreshToken,

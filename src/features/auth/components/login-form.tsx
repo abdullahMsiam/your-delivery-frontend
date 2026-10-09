@@ -11,11 +11,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
 
 import { ApiError } from "@/lib/api-client";
@@ -23,6 +19,8 @@ import { homeRouteForRole } from "@/lib/routes";
 import { DEMO_ACCOUNTS, type DemoAccount } from "@/lib/demo-accounts";
 import { DemoLoginButton } from "@/components/layout/demo-login-button";
 import { useAuth } from "@/src/hooks/useAuth";
+import { demoLogin } from "../lib/demo-login";
+import { useAuthStore } from "@/src/store/auth-store";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Schema                                   */
@@ -81,12 +79,12 @@ export function LoginForm() {
 
   async function handleDemoLogin(account: DemoAccount) {
     try {
-      const user = await login(account.email, account.password);
+      const { accessToken, refreshToken, user } = await demoLogin(account.role);
+      useAuthStore.getState().setSession(accessToken, refreshToken, user);
       toast.success(`Logged in as ${user.role}`);
       goAfterLogin(user.role);
     } catch (err) {
-      const message =
-        err instanceof ApiError ? err.message : "Demo login failed";
+      const message = err instanceof Error ? err.message : "Demo login failed";
       toast.error(message);
     }
   }
@@ -189,11 +187,7 @@ export function LoginForm() {
           )}
         />
 
-        <Button
-          type="submit"
-          className="w-full h-11"
-          disabled={submitting}
-        >
+        <Button type="submit" className="w-full h-11" disabled={submitting}>
           {submitting ? "Signing in…" : "Sign in"}
         </Button>
       </form>
