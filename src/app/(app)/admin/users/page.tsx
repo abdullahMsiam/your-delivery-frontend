@@ -1,11 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Users as UsersIcon, UserX } from "lucide-react";
+import { BarChart3, Users as UsersIcon, UserX } from "lucide-react";
 
 import { RoleGuard } from "@/components/layout/role-guard";
 import { UserRole } from "@/src/types";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -28,6 +28,8 @@ import { useSearchParamsState } from "@/src/hooks/use-search-params-state";
 import { useUser } from "@/src/hooks/useAuth";
 import { formatDate } from "@/lib/format";
 import type { User } from "@/src/types";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default function AdminUsersPage() {
   return (
@@ -129,6 +131,18 @@ function AdminUsersList() {
       header: <span className="sr-only">Actions</span>,
       cell: (u) => (
         <div className="flex items-center gap-1 justify-end">
+          {u.role === "AGENT" && (
+            <Link
+              href={`/admin/agents/${u.id}`}
+              className={cn(
+                buttonVariants({ variant: "ghost", size: "sm" }),
+                "h-8 gap-1.5 text-xs",
+              )}
+            >
+              <BarChart3 className="h-3.5 w-3.5" />
+              Stats
+            </Link>
+          )}
           <ChangeRoleDialog user={u} currentAdminId={currentUser?.id ?? ""} />
           <ToggleUserActiveDialog
             user={u}
