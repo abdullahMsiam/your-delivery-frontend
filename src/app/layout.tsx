@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthSync } from "@/components/layout/auth-sync";
+import { BackendWarmer } from "@/components/providers/backend-warmer";
+import { ColdStartBanner } from "@/components/shared/cold-start-banner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -32,7 +34,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
+            <BackendWarmer />
             <AuthSync>{children}</AuthSync>
+            <ColdStartBanner/>
           </QueryProvider>
           <Toaster richColors position="top-right" />
         </ThemeProvider>

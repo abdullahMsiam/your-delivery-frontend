@@ -68,7 +68,8 @@ export const api: AxiosInstance = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  timeout: 20_000,
+  // Long timeout to survive Render free-tier cold starts (~30-60s).
+  timeout: 60_000,
 });
 
 /* -------------------------------------------------------------------------- */
@@ -164,6 +165,12 @@ api.interceptors.response.use(
       }
     }
 
+    if (!error.response && original && !original._retried) {
+      original._retried = true;
+      await new Promise((r) => setTimeout(r, 1500));
+      return api.request(original);
+    }
+
     throw normalizeError(error);
   },
 );
@@ -183,12 +190,15 @@ function normalizeError(error: AxiosError<ApiErrorResponse>): ApiError {
     return new ApiError(message, status, issues);
   }
 
-  if (error.code === "ECONNABORTED") {
-    return new ApiError("Request timed out. Please try again.", 408);
+  if (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT") {
+    return new ApiError(
+      "The server is taking too long to respond. It may be waking up — please try again in a few seconds.",
+      408,
+    );
   }
 
   return new ApiError(
-    "Network error. Check your connection or the backend may be down.",
+    "Can't reach the server. It may be waking up from sleep (this can take up to a minute). Please try again.",
     0,
   );
 }
