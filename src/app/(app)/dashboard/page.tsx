@@ -29,6 +29,7 @@ import {
   DeliveryRouteCell,
   DeliveryStatusCell,
 } from "@/src/features/deliveries/components/delivery-row-cells";
+import { useRouter } from "next/navigation";
 
 const ACTIVE_STATUSES: DeliveryStatus[] = [
   "PENDING",
@@ -53,6 +54,8 @@ function Dashboard() {
     page: 1,
     limit: 50,
   });
+
+  const router = useRouter(); 
 
   const stats = useMemo(() => {
     const items = data?.data ?? [];
@@ -188,6 +191,7 @@ function Dashboard() {
               rows={recent}
               columns={columns}
               getRowKey={(d) => d.id}
+              onRowClick={(d) => router.push(`/dashboard/deliveries/${d.id}`)}
             />
           )}
         </CardContent>

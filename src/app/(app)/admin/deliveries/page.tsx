@@ -17,6 +17,7 @@ import { useAdminDeliveries } from "@/src/features/admin/hooks/use-admin-deliver
 import { useSearchParamsState } from "@/src/hooks/use-search-params-state";
 import { formatCurrency, formatRelative } from "@/lib/format";
 import type { Delivery } from "@/src/types";
+import { ViewDeliveryButton } from "@/src/features/deliveries/components/view-delivery-button";
 
 export default function AdminDeliveriesPage() {
   return (
@@ -152,6 +153,13 @@ function AdminDeliveriesList() {
         </div>
       ),
       cellClassName: "min-w-[130px]",
+    },
+    {
+      key: "actions",
+      header: <span className="sr-only">Actions</span>,
+      cell: () => <ViewDeliveryButton />,
+      headClassName: "text-right w-[1%]",
+      cellClassName: "text-right w-[1%] whitespace-nowrap",
     },
   ];
 

@@ -24,6 +24,7 @@ import { useMyDeliveries } from "@/src/features/deliveries/hooks/use-my-deliveri
 import { useSearchParamsState } from "@/src/hooks/use-search-params-state";
 import type { Delivery } from "@/src/types";
 import { cn } from "@/lib/utils";
+import { ViewDeliveryButton } from "@/src/features/deliveries/components/view-delivery-button";
 
 export default function DeliveriesPage() {
   return (
@@ -90,6 +91,13 @@ function DeliveriesList() {
       header: "Status",
       cell: (d) => <DeliveryStatusCell delivery={d} />,
       cellClassName: "min-w-[140px]",
+    },
+    {
+      key: "actions",
+      header: <span className="sr-only">Actions</span>,
+      cell: () => <ViewDeliveryButton />,
+      headClassName: "text-right w-[1%]",
+      cellClassName: "text-right w-[1%] whitespace-nowrap",
     },
   ];
 

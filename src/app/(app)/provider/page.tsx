@@ -31,6 +31,7 @@ import { useAgentStatistics } from "@/src/features/agent/hooks/use-agent-statist
 import { useAgentDeliveries } from "@/src/features/agent/hooks/use-agent-deliveries";
 import type { Delivery, DeliveryStatus } from "@/src/types";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const ACTIVE_STATUSES: DeliveryStatus[] = [
   "ASSIGNED",
@@ -50,6 +51,8 @@ export default function AgentDashboardPage() {
 function Dashboard() {
   const stats = useAgentStatistics();
   const recent = useAgentDeliveries({ page: 1, limit: 50 });
+
+  const router = useRouter(); 
 
   const columns: Column<Delivery>[] = [
     {
@@ -242,6 +245,7 @@ function Dashboard() {
               rows={recentFive}
               columns={columns}
               getRowKey={(d) => d.id}
+              onRowClick={(d) => router.push(`/provider/deliveries/${d.id}`)}
             />
           )}
         </CardContent>
