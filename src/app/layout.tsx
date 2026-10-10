@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
@@ -9,6 +9,13 @@ import { BackendWarmer } from "@/components/providers/backend-warmer";
 import { ColdStartBanner } from "@/components/shared/cold-start-banner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#dc2626" },
+    { media: "(prefers-color-scheme: dark)", color: "#dc2626" },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -49,18 +56,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta
-          name="theme-color"
-          content="#dc2626"
-          media="(prefers-color-scheme: light)"
-        />
-        <meta
-          name="theme-color"
-          content="#dc2626"
-          media="(prefers-color-scheme: dark)"
-        />
-      </head>
       <body className={`${inter.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
